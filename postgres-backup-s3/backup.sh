@@ -5,17 +5,14 @@ set -o pipefail
 
 if [ "${S3_ACCESS_KEY_ID}" = "**None**" ]; then
   echo "You need to set the S3_ACCESS_KEY_ID environment variable."
-  # exit 1
 fi
 
 if [ "${S3_SECRET_ACCESS_KEY}" = "**None**" ]; then
   echo "You need to set the S3_SECRET_ACCESS_KEY environment variable."
-  # exit 1
 fi
 
 if [ "${S3_BUCKET}" = "**None**" ]; then
   echo "You need to set the S3_BUCKET environment variable."
-  # exit 1
 fi
 
 
@@ -39,16 +36,10 @@ if [ "${POSTGRES_PASSWORD}" = "**None**" ]; then
   exit 1
 fi
 
-# if [ "${S3_ENDPOINT}" == "**None**" ]; then
-#   AWS_ARGS=""
-# else
-#   AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
-# fi
-
-# env vars needed for aws tools
-# export AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY_ID
-# export AWS_SECRET_ACCESS_KEY=$S3_SECRET_ACCESS_KEY
-# export AWS_DEFAULT_REGION=$S3_REGION
+env vars needed for aws tools
+export AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY=$S3_SECRET_ACCESS_KEY
+export AWS_DEFAULT_REGION=$S3_REGION
 
 export PGPASSWORD=$POSTGRES_PASSWORD
 POSTGRES_HOST_OPTS="-h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER $POSTGRES_EXTRA_OPTS"
@@ -83,6 +74,8 @@ rm -rf backup
 
 echo "Uploading dump to $S3_BUCKET"
 
-# cat postgis_backup.sql.gz | aws $AWS_ARGS s3 cp - s3://$S3_BUCKET/$S3_PREFIX/postgis_backup_$(date +"%Y-%m-%dT%H:%M:%SZ").sql.gz || exit 2
+aws $AWS_ARGS s3 cp postgis_backup.tar.gz s3://$S3_BUCKET/postgis_backup_$(date +"%Y-%m-%dT%H:%M:%SZ").sql.gz || exit 2
+
+rm -rf postgis_backup.tar.gz
 
 echo "SQL backup uploaded successfully"
