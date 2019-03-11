@@ -69,13 +69,13 @@ echo "copy all database in backup folder"
 mkdir backup
 cp *.sql.gz ./backup
 rm -rf *.sql.gz
-tar -zcvf postgis_backup.tar.gz backup/
+tar -cvf postgis_backup.tar backup
 rm -rf backup
 
 echo "Uploading dump to $S3_BUCKET"
 
-aws $AWS_ARGS s3 cp postgis_backup.tar.gz s3://$S3_BUCKET/postgis_backup_$(date +"%Y-%m-%dT%H:%M:%SZ").sql.gz || exit 2
+aws $AWS_ARGS s3 cp postgis_backup.tar s3://$S3_BUCKET/postgis_backup_$(date +"%Y-%m-%dT%H:%M:%SZ").tar || exit 2
 
-rm -rf postgis_backup.tar.gz
+rm -rf postgis_backup.tar
 
 echo "SQL backup uploaded successfully"
