@@ -73,9 +73,9 @@ tar -cvf postgis_backup.tar backup
 rm -rf backup
 
 echo "Uploading dump to $S3_BUCKET"
-old=$(aws s3 ls s3://geoserver-postgis-stage | wc -l)
+old=$(aws s3 ls s3://$S3_BUCKET | wc -l)
 aws $AWS_ARGS s3 cp postgis_backup.tar s3://$S3_BUCKET/postgis_backup_$(date +"%Y-%m-%dT%H:%M:%SZ").tar || exit 2
-new=$(aws s3 ls s3://geoserver-postgis-stage | wc -l)
+new=$(aws s3 ls s3://$S3_BUCKET | wc -l)
 rm -rf postgis_backup.tar
 
 if [ $(($old+1)) == $new ]
